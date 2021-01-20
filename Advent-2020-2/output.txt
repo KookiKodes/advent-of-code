@@ -1,0 +1,8 @@
+Total number of valid passwords between given range
+Answer: 645
+
+
+Total number of valid passwords at a given string index
+Answer: 737
+
+
