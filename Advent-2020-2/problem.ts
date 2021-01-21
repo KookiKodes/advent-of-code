@@ -1,5 +1,6 @@
 import getAdventInput from "../getAdventInput";
 import * as path from "path";
+import * as fs from "fs";
 
 interface Input {
   target: string;
@@ -19,11 +20,18 @@ const parseAdventInput = (): Input[] => {
     day: 2,
     path: path.join(__dirname, "input.txt"),
   });
+
+  // Converts data to understandable data
   const input = data.reduce((arr, value) => {
     const [strRange, strTarget, str] = value.split(" ");
     if (strRange && strTarget && str) {
+      //Makes range an array of two numbers
       const range = strRange.split("-").map((val) => parseInt(val));
+
+      //ensures the target value is the target letter to look for
       const target = strTarget.substring(0, 1);
+
+      //pushes the data into the arr as an object with range, target and the str
       arr.push({ range, target, str });
     }
     return arr;
@@ -33,23 +41,26 @@ const parseAdventInput = (): Input[] => {
 
 const validPasswordBetweenRange = ({ target, range, str }: Input): boolean => {
   const [min, max] = range;
+
+  //Init the counter at 1 which will store  the total iterations of the target within the provided str
   let targetCounter: number = 0;
 
-  for (let char of str) {
-    if (char === target) targetCounter++;
-  }
+  //loops through each character of the str and only increment the counter when a letter matches the target
+  for (let char of str) if (char === target) targetCounter++;
 
-  if (targetCounter <= max && min <= targetCounter) {
-    return true;
-  }
+  //If the counter is between the range then we will return true
+  if (targetCounter <= max && min <= targetCounter) return true;
+
   return false;
 };
 
 const validPasswordOnRange = ({ target, range, str }: Input): boolean => {
+  //Create a map to solely store the character at a given index.
   const map = {};
   const strLength = str.length;
   const [min, max] = range;
 
+  // Need to start
   for (let i = 1; i <= strLength; i++) {
     if (i === min || i === max) {
       map[i] = str[i - 1];
