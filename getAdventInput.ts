@@ -5,8 +5,8 @@ require("dotenv").config();
 
 interface Props {
   day: number | string;
+  parse: (input: string) => any;
   year?: number | string;
-  parseInput?: (input: string) => string[];
   path?: string;
 }
 
@@ -24,14 +24,13 @@ const fetchAdventInput = async (
   });
 
   const dataText = await data.text();
-  const dataArr = dataText.split("\n").join(",");
-  fs.writeFile(pathDir, dataArr, (err) => {
+  fs.writeFile(pathDir, dataText, (err) => {
     if (err) console.log("unsuccessful");
     else console.log("success!");
   });
 };
 
-const getAdventInput = (props: Props): string[] => {
+const getAdventInput = (props: Props) => {
   const year = props.year || "2020";
   const url = `https://adventofcode.com/${year}/day/${props.day}/input`;
   const fileName = `advent-year-${year}-day-${props.day}.txt`;
@@ -41,12 +40,14 @@ const getAdventInput = (props: Props): string[] => {
   try {
     if (fs.existsSync(props.path || pathDir)) {
       const data = fs.readFileSync(props.path || pathDir, { encoding: "utf8" });
-      return [...data.split(",").slice(0, data.length - 1)];
+      return props.parse(data);
     } else {
       fetchAdventInput(url, props.path || pathDir);
     }
   } catch (err) {
-    console.log(err);
+    console.log(
+      "Nothing is truly wrong, had to fetch data from Advent, please run again!"
+    );
   }
 };
 

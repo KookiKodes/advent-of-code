@@ -15,14 +15,8 @@ interface Test {
 
 type Check = (value: Input) => boolean;
 
-const parseAdventInput = (): Input[] => {
-  const data = getAdventInput({
-    day: 2,
-    path: path.join(__dirname, "input.txt"),
-  });
-
-  // Converts data to understandable data
-  const input = data.reduce((arr, value) => {
+const parseAdventInput = (data: string): Input[] => {
+  const input = data.split("\n").reduce((arr, value) => {
     const [strRange, strTarget, str] = value.split(" ");
     if (strRange && strTarget && str) {
       //Makes range an array of two numbers
@@ -82,7 +76,11 @@ const totalPasswords = (input: Input[], check: Check): number => {
 
 // Can play around with the tests here to find different solutions
 const getTests = (): Test[] => {
-  const input = parseAdventInput();
+  const input = getAdventInput({
+    day: 2,
+    path: path.join(__dirname, "input.txt"),
+    parse: parseAdventInput,
+  });
   return [
     {
       desc: "Total number of valid passwords between given range",
