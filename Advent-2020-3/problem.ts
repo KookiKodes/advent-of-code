@@ -23,7 +23,10 @@ interface Output {
   num: number;
 }
 
-type Tests = Input[];
+enum Tiles {
+  tree = "#",
+  open = ".",
+}
 
 const parseAdventInput = (data: string): string[] =>
   data.split("\n").filter((data) => typeof data === "string");
@@ -45,7 +48,7 @@ function getNumOfTrees({ right, down, input }: Input): number {
     position = move({ right, down, length, position })
   ) {
     const [x, y] = position;
-    if (input[y][x] === "#") count++;
+    if (input[y][x] === Tiles.tree) count++;
   }
 
   return count;
@@ -57,7 +60,7 @@ const adventInput = getAdventInput({
   parse: parseAdventInput,
 });
 
-const tests: Tests = [
+const tests: Input[] = [
   {
     input: adventInput,
     right: 3,
@@ -85,7 +88,7 @@ const tests: Tests = [
   },
 ];
 
-const probability = (tests: Tests): Output[] =>
+const probability = (tests: Input[]): Output[] =>
   tests.map((test) => {
     return {
       num: getNumOfTrees(test),
