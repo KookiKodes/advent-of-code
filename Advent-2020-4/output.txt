@@ -1,6 +1,0 @@
-
-Test 0: The total number of valid passports is 237.
-
-
-Test 1: The total number of valid passports is 172.
-

@@ -15,12 +15,8 @@
 
 # How to use:
 
-### \*Create a .env file with a COOKIE value set to your advent of code's cookie;
+### 1. Create a .env file with a COOKIE value set to your advent of code's cookie;
 
-### \*That's really it, all you have to do now is get the input data from the website and then create an output file.
+## 2. To fetch the input data from advent type `deno run -A --unstable task.ts fetch`
 
-### \*Now I do have this setup in two different commands and that's because problems will slowly be added overtime :)
-
-## \*To fetch the input data from advent type "deno run -A --unstable task.ts fetch"
-
-## \*To generate an output file with the answers to the problem type "deno run -A --unstable task.ts output"
+## 3. To generate an output file with the answers to the problem type `deno run -A --unstable task.ts output`
