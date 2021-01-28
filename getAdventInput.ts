@@ -1,54 +1,27 @@
-import fetch from "node-fetch";
-import * as fs from "fs";
-import * as path from "path";
-require("dotenv").config();
+import * as path from "https://deno.land/std@0.84.0/path/mod.ts";
+import { existsSync } from "https://deno.land/std@0.84.0/fs/mod.ts";
+import * as Colors from "https://deno.land/std/fmt/colors.ts";
 
-interface Props {
-  day: number | string;
-  parse: (input: string) => any;
-  year?: number | string;
-  path?: string;
+const __dirname = path.dirname(path.fromFileUrl(import.meta.url));
+
+export interface Props {
+  day: number;
+  year: number;
+  parse(data: string): any;
 }
 
-const cookie = process.env.COOKIE;
-
-const fetchAdventInput = async (
-  url: string,
-  pathDir: string
-): Promise<void> => {
-  const data = await fetch(url, {
-    method: "GET",
-    headers: {
-      cookie,
-    },
-  });
-
-  const dataText = await data.text();
-  fs.writeFile(pathDir, dataText, (err) => {
-    if (err) console.log("unsuccessful");
-    else console.log("success!");
-  });
-};
-
-const getAdventInput = (props: Props) => {
-  const year = props.year || "2020";
-  const url = `https://adventofcode.com/${year}/day/${props.day}/input`;
-  const fileName = `advent-year-${year}-day-${props.day}.txt`;
-  let pathDir: string;
-
-  if (!props.path) pathDir = path.join(__dirname, fileName);
-  try {
-    if (fs.existsSync(props.path || pathDir)) {
-      const data = fs.readFileSync(props.path || pathDir, { encoding: "utf8" });
-      return props.parse(data);
-    } else {
-      fetchAdventInput(url, props.path || pathDir);
-    }
-  } catch (err) {
-    console.log(
-      "Nothing is truly wrong, had to fetch data from Advent, please run again!"
+export const getAdventInput = (args: Props): any => {
+  const pathDir = path.join(
+    __dirname,
+    `advent-${args.year}-${args.day}`,
+    "input.txt"
+  );
+  if (!existsSync(pathDir)) {
+    throw new Error(
+      Colors.red("[ERROR]: ") +
+        `Please use the following command within your terminal: deno run -A --unstable tasksHandler.ts fetch`
     );
   }
+  const data = Deno.readTextFileSync(pathDir);
+  return args.parse(data);
 };
-
-export default getAdventInput;

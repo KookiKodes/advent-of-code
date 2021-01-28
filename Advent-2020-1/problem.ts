@@ -1,37 +1,36 @@
-import getAdventInput from "../getAdventInput";
-import * as path from "path";
-import * as fs from "fs";
-
 interface TargetProducts {
   sum: number;
   input: number[];
-  products: number;
+  products?: number;
   result?: Result;
 }
 
-type Result = {
+export type Result = {
   val: number;
   products: number[];
 };
 
-const parseAdventInput = (data: string): number[] => {
-  return data.split("\n").reduce((result, data) => {
+export function parseAdventInput(data: string): Result[] {
+  return data.split("\n").reduce((result: any[], data) => {
     if (data) {
       const num = parseInt(data);
       result.push(num);
     }
     return result;
-  }, []);
-};
+  }, [] as Result[]);
+}
 
-const calcTargetProduct = ({
+export const problem = ({
   input,
   sum,
-  products,
+  products = 2,
   result = { val: 1, products: [] },
 }: TargetProducts): Result => {
+  interface MapObj {
+    [key: number]: number;
+  }
   // Create a reference map
-  const map = {};
+  const map: MapObj = {};
 
   //Generate the result
   result.val = input.reduce((acc, num, index) => {
@@ -47,7 +46,7 @@ const calcTargetProduct = ({
       // const newInput = [...input.slice(0, index), ...input.slice(index + 1)];
 
       //This is the new product;
-      const product = calcTargetProduct({
+      const product = problem({
         input,
         sum: newSum,
         products: products - 1,
@@ -86,33 +85,3 @@ const calcTargetProduct = ({
 
   return result;
 };
-
-const find2020Product = (sum: number, products: number = 2): Result => {
-  //Get's string input from advent website;
-  const input = getAdventInput({
-    day: 1,
-    path: path.join(__dirname, "input.txt"),
-    parse: parseAdventInput,
-  });
-  return calcTargetProduct({ sum, input, products });
-};
-
-const createOutputFile = (
-  pathName: string,
-  data: { title: string; value: Result }[]
-) => {
-  const result = data.reduce((str, ans) => {
-    return (str += `\n\n\n${ans.title}\nAnswer: ${ans.value.val}\nNumbers: ${ans.value.products}`);
-  }, "");
-  fs.writeFile(pathName, result, (err) => {
-    if (err) console.log(err);
-    else console.log("success");
-  });
-};
-
-createOutputFile(path.join(__dirname, "output.txt"), [
-  { title: "This is for 2 Products", value: find2020Product(2020) },
-  { title: "This is for 3 Products", value: find2020Product(2020, 3) },
-  { title: "This is for 4 Products", value: find2020Product(2020, 4) },
-  // {title: 'This is for 5 Products', value: find2020Product(2020, 5)}
-]);

@@ -1,22 +1,22 @@
-import getAdventInput from "../getAdventInput";
-import * as path from "path";
-import * as fs from "fs";
-
 interface Input {
   target: string;
   range: number[];
   str: string;
 }
 
-interface Test {
+interface MapObj {
+  [key: number]: string;
+}
+
+export interface Test {
   desc: string;
   value: number;
 }
 
 type Check = (value: Input) => boolean;
 
-const parseAdventInput = (data: string): Input[] => {
-  const input = data.split("\n").reduce((arr, value) => {
+export function parseAdventInput(data: string): Input[] {
+  const input = data.split("\n").reduce((arr: Input[], value) => {
     const [strRange, strTarget, str] = value.split(" ");
     if (strRange && strTarget && str) {
       //Makes range an array of two numbers
@@ -31,9 +31,13 @@ const parseAdventInput = (data: string): Input[] => {
     return arr;
   }, []);
   return input as Input[];
-};
+}
 
-const validPasswordBetweenRange = ({ target, range, str }: Input): boolean => {
+export const validPasswordBetweenRange = ({
+  target,
+  range,
+  str,
+}: Input): boolean => {
   const [min, max] = range;
 
   //Init the counter at 1 which will store  the total iterations of the target within the provided str
@@ -48,9 +52,13 @@ const validPasswordBetweenRange = ({ target, range, str }: Input): boolean => {
   return false;
 };
 
-const validPasswordOnRange = ({ target, range, str }: Input): boolean => {
+export const validPasswordOnRange = ({
+  target,
+  range,
+  str,
+}: Input): boolean => {
   //Create a map to solely store the character at a given index.
-  const map = {};
+  const map: MapObj = {};
   const strLength = str.length;
   const [min, max] = range;
 
@@ -66,7 +74,7 @@ const validPasswordOnRange = ({ target, range, str }: Input): boolean => {
   return false;
 };
 
-const totalPasswords = (input: Input[], check: Check): number => {
+export const problem = (input: Input[], check: Check): number => {
   return input.reduce((result, value) => {
     const valid = check(value);
     if (valid) result++;
@@ -75,30 +83,3 @@ const totalPasswords = (input: Input[], check: Check): number => {
 };
 
 // Can play around with the tests here to find different solutions
-const getTests = (): Test[] => {
-  const input = getAdventInput({
-    day: 2,
-    path: path.join(__dirname, "input.txt"),
-    parse: parseAdventInput,
-  });
-  return [
-    {
-      desc: "Total number of valid passwords between given range",
-      value: totalPasswords(input, validPasswordBetweenRange),
-    },
-    {
-      desc: "Total number of valid passwords at a given string index",
-      value: totalPasswords(input, validPasswordOnRange),
-    },
-  ];
-};
-
-const createOutputFile = (pathName: string, tests: Test[]): void => {
-  const output = tests.reduce((str, test) => {
-    str += `${test.desc}\nAnswer: ${test.value}\n\n\n`;
-    return str;
-  }, "");
-  fs.writeFileSync(pathName, output);
-};
-
-createOutputFile(path.join(__dirname, "output.txt"), getTests());
