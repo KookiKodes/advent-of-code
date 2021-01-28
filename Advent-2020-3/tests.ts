@@ -47,8 +47,9 @@ const getTests = (): Output[] => {
   });
 };
 
-const createOutputFile = (data: Output[]): void => {
+const createOutputFile = async (data: Output[]): void => {
   const encoder = new TextEncoder();
+  const pathDir = path.join(__dirname, "output.txt");
   let product = 1;
   let output = data.reduce((result, info, index) => {
     product *= info.num;
@@ -59,7 +60,7 @@ const createOutputFile = (data: Output[]): void => {
   }, ``);
 
   output += `\nThe product of all of these numbers is ${product}`;
-  Deno.writeFile(path.join(__dirname, "output.txt"), encoder.encode(output));
+  await Deno.writeFile(pathDir, encoder.encode(output));
 };
 
 createOutputFile(getTests());

@@ -57,13 +57,14 @@ const getTests = (): number[] => {
   ];
 };
 
-const createOutputFile = (tests: number[]) => {
+const createOutputFile = async (tests: number[]) => {
   const encoder = new TextEncoder();
+  const pathDir = path.join(__dirname, "output.txt");
   const output = tests.reduce((str, num, index) => {
     str += `\nTest ${index}: The total number of valid passports is ${num}.\n\n`;
     return str;
   }, "");
-  Deno.writeFile(path.join(__dirname, "output.txt"), encoder.encode(output));
+  await Deno.writeFile(pathDir, encoder.encode(output));
 };
 
 createOutputFile(getTests());
